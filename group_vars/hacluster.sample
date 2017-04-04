@@ -1,0 +1,8 @@
+# ノード間通信LAN(ha.cfのbcast)として設定するネットワークを記述します。
+INTERFACES:
+ - eth1
+ - eth2
+
+AUTHKEY: someword
+
+SYSLOG_FACILITY: local1

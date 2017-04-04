@@ -1,0 +1,10 @@
+- hosts: localhost
+
+  tasks:
+    - name: Download pacemaker-repo-1.0
+      get_url:
+        url="https://osdn.net/frs/redir.php?m=iij&f=%2Flinux-ha%2F{{item.rev}}%2F{{item.package}}"
+        dest=./roles/pacemaker-install/files/
+      with_items:
+        - { rev: 61791, package: pacemaker-1.0.13-2.1.el6.x86_64.repo.tar.gz }
+        - { rev: 61791, package: pacemaker-1.0.13-2.1.el6.i686.repo.tar.gz }

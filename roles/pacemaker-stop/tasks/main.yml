@@ -1,0 +1,11 @@
+- name: check if Heartbeat service is presented
+  stat:
+    path=/etc/init.d/heartbeat
+  register: heartbeat_service_file
+
+- name: stop Heartbeat service if exists
+  service:
+    name="heartbeat"
+    state=stopped
+  when: heartbeat_service_file.stat.exists == True
+

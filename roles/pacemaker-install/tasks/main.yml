@@ -1,0 +1,7 @@
+---
+- include: pacemaker-install.yml
+- include: heartbeat-config.yml
+
+# config for RHEL5 is not supported in this playbook
+- include: rsyslog-config-rhel6.yml
+  when: ansible_distribution_major_version == '6'

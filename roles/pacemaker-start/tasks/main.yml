@@ -1,0 +1,4 @@
+- name: start Heartbeat service
+  service:
+    name="heartbeat"
+    state=started

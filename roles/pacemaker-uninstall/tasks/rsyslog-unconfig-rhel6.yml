@@ -1,0 +1,22 @@
+- name: restore /etc/rsyslog.conf for /var/log/messages
+  lineinfile:
+    dest="/etc/rsyslog.conf"
+    regexp="{{ item.regexp }}"
+    line="{{ item.line }}"
+    state=present
+    backup=yes
+  with_items:
+    - { regexp: '/var/log/messages$', line: '*.info;mail.none;authpriv.none;cron.none                /var/log/messages' }
+  notify: restart rsyslog
+
+- name: restore /etc/rsyslog.conf for additional configurations
+  lineinfile:
+    dest="/etc/rsyslog.conf"
+    regexp="{{ item }}"
+    state=absent
+    backup=yes
+  with_items:
+    - "^{{ SYSLOG_FACILITY }}.info "
+    - '\$SystemLogRateLimitInterval '
+    - '\$EscapeControlCharactersOnReceive '
+  notify: restart rsyslog

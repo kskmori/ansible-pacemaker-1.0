@@ -1,0 +1,7 @@
+- include: pacemaker-uninstall.yml
+
+# config for RHEL5 is not supported in this playbook
+- include: rsyslog-unconfig-rhel6.yml
+  when: ansible_distribution_major_version == '6'
+
+

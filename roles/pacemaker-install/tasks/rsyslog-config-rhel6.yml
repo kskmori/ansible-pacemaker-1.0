@@ -1,0 +1,35 @@
+- name: config /etc/rsyslog.conf; exclude cluster logs from /var/log/message
+  lineinfile:
+    dest="/etc/rsyslog.conf"
+    regexp="{{ item.regexp }}"
+    line="{{ item.line }}"
+    state=present
+    backup=yes
+  with_items:
+    - { regexp: '/var/log/messages$', line: '*.info;mail.none;authpriv.none;cron.none;{{ SYSLOG_FACILITY }}.none    /var/log/messages' }
+  notify: restart rsyslog
+
+- name: config /etc/rsyslog.conf; sepalate cluster logs
+  lineinfile:
+    dest="/etc/rsyslog.conf"
+    regexp="{{ item.regexp }}"
+    line="{{ item.line }}"
+    insertafter='^local7'
+    state=present
+    backup=yes
+  with_items:
+    - { regexp: "^{{ SYSLOG_FACILITY }}.info ", line: '{{ SYSLOG_FACILITY }}.info                 /var/log/ha-log;RSYSLOG_TraditionalFileFormat' }
+  notify: restart rsyslog
+
+- name: config /etc/rsyslog.conf; disable ratelimit, escapechars
+  lineinfile:
+    dest="/etc/rsyslog.conf"
+    regexp="{{ item.regexp }}"
+    line="{{ item.line }}"
+    insertafter="GLOBAL DIRECTIVES"
+    state=present
+    backup=yes
+  with_items:
+    - { regexp: '\$SystemLogRateLimitInterval ', line: '$SystemLogRateLimitInterval 0' }
+    - { regexp: '\$EscapeControlCharactersOnReceive ', line: '$EscapeControlCharactersOnReceive off' }
+  notify: restart rsyslog

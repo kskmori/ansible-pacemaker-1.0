@@ -1,0 +1,40 @@
+---
+#- name: Copy Pacemaker repository package to nodes
+#  copy:
+#    src="{{ item }}"
+#    dest="/tmp/"
+#  with_fileglob: "pacemaker-{{ PACEMAKER_VERSION }}.el{{ ansible_distribution_major_version }}.{{ ansible_architecture }}.repo.tar.gz"
+#  register: rc_copy
+
+- name: extract Pacemaker repository package
+  unarchive:
+    src: pacemaker-{{ PACEMAKER_VERSION }}.el{{ ansible_distribution_major_version }}.{{ ansible_architecture }}.repo.tar.gz
+    dest: /tmp/
+  # To work around the issue:
+  #  https://github.com/ansible/ansible-modules-core/issues/3706
+  environment:
+    LANG: C
+    LC_ALL: C
+    LC_MESSAGES: C
+
+- name: cleanup yum cache
+  command: yum clean all warn=no
+  changed_when: False
+
+- name: install the repository package
+  yum:
+    conf_file: /tmp/pacemaker-{{ PACEMAKER_VERSION }}.el{{ ansible_distribution_major_version }}.{{ ansible_architecture }}.repo/pacemaker.repo
+    name: "{{ item }}"
+    update_cache: yes
+    state: latest
+  with_items:
+    - pacemaker
+    - pacemaker-mgmt
+    - pm_crmgen
+    - pm_logconv-hb
+    - pm_diskd
+    - pm_extras
+    - pm_kvm_tools
+    - vm-ctl
+    - ipmitool
+

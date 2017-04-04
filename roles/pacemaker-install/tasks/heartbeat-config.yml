@@ -1,0 +1,15 @@
+- name: disable to start on boot
+  shell: chkconfig heartbeat off
+
+- name: configure ha.cf
+  template:
+    src="ha.cf.j2"
+    dest="/etc/ha.d/ha.cf"
+    mode=0644
+
+- name: create authkeys
+  template:
+    src="authkeys.j2"
+    dest="/etc/ha.d/authkeys"
+    mode=0600
+

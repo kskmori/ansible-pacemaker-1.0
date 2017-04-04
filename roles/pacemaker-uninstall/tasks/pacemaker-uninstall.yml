@@ -1,0 +1,36 @@
+- name: uninstall Pacemaker core packages
+  yum: name="{{ item }}" state=absent
+  with_items:
+    - pacemaker
+    - heartbeat
+    - heartbeat-libs
+    - corosync
+    - cluster-glue
+    - cluster-glue-libs
+    - resource-agents
+    - libesmtp
+    - pm_crmgen
+    - pm_logconv-hb
+    - pm_diskd
+    - pm_extras
+    - pm_kvm_tools
+    - vm-ctl
+
+- name: uninstall the Pacemaker repository package
+  file: name="/tmp/pacemaker-repo-{{ PACEMAKER_VERSION }}.el{{ ansible_distribution_major_version }}.{{ ansible_architecture }}.repo" state=absent
+    
+- name: remove config files
+  file: name="{{ item }}" state=absent
+  with_items:
+    - /etc/pm_logconv.conf.rpmsave
+    - /etc/init/pm_logconv_init.conf
+    - /etc/logrotate.d/heartbeat.rpmsave
+    - /etc/ha.d
+    - /var/run/heartbeat
+    - /usr/lib64/heartbeat
+    - /usr/lib64/stonith
+    - /usr/share/doc/pacemaker
+
+- name: remove CIB config if requested
+  file: path=/var/lib/heartbeat state=absent
+  when: "{{ REMOVE_CIB }} | bool"
