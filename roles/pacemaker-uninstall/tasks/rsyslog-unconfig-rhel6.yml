@@ -16,7 +16,7 @@
     state=absent
     backup=yes
   with_items:
-    - "^{{ SYSLOG_FACILITY }}.info "
+    - '/var/log/ha-log;RSYSLOG_TraditionalFileFormat$'
     - '\$SystemLogRateLimitInterval '
     - '\$EscapeControlCharactersOnReceive '
   notify: restart rsyslog
